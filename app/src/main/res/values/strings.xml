@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">LoginApp</string>
+    <string name="login_hint">Login</string>
+    <string name="login_password_hint">Password</string>
+    <string name="login_enter">Enter</string>
+    <string name="login_register">Register</string>
+    <string name="input_error">Invalid input</string>
+    <string name="e_mail">E-mail</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="password_enter_again">Enter password again</string>
+    <string name="register">Register</string>
+    <string name="password_enter">Enter password</string>
+    <string name="login_register_success">Success!</string>
+    <string name="login_register_error">Login is already taken</string>
+    <string name="login_error">Login Error. Wrong login or password</string>
+    <string name="request_error">Request Error</string>
+    <string name="logout">Logout</string>
+    <string name="name">Name</string>
+</resources>
