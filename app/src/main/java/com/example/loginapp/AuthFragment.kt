@@ -2,24 +2,31 @@ package com.example.loginapp
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.text.TextUtils
+import android.util.Log
 import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AutoCompleteTextView
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
+import com.google.gson.Gson
+import com.google.gson.JsonObject
+import okhttp3.*
+import java.io.IOException
 
 
 class AuthFragment : Fragment() {
 
-    private lateinit var mLoginEditText: AutoCompleteTextView
-    private lateinit var mPasswordEditText: EditText
+    private lateinit var mEmail: AutoCompleteTextView
+    private lateinit var mPassword: EditText
     private lateinit var mEnterButton: Button
     private lateinit var mRegisterButton: Button
-    private lateinit var mSharedPreferencesHelper: SharedPreferencesHelper
-    private lateinit var mLoginedUsersAdapter: ArrayAdapter<String>
 
     companion object {
         fun newInstance(): AuthFragment {
@@ -37,63 +44,80 @@ class AuthFragment : Fragment() {
 
         val view: View = inflater.inflate(R.layout.fr_auth, container, false)
 
-        mLoginEditText = view.findViewById(R.id.etEmail)
-        mPasswordEditText = view.findViewById(R.id.etPassword)
+        mEmail = view.findViewById(R.id.etEmail)
+        mPassword = view.findViewById(R.id.etPassword)
         mEnterButton = view.findViewById(R.id.buttonEnter)
         mRegisterButton = view.findViewById(R.id.buttonRegister)
-        mSharedPreferencesHelper = SharedPreferencesHelper(context!!)
-
 
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        mLoginedUsersAdapter = ArrayAdapter(
-            context!!,
-            android.R.layout.simple_dropdown_item_1line,
-            mSharedPreferencesHelper.getSuccessLogins().toMutableList().filterNotNull()
-        )
 
-        mLoginEditText.setAdapter(mLoginedUsersAdapter)
 
-        mLoginEditText.setOnFocusChangeListener { _, hasFocus ->
+        mEmail.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                mLoginEditText.showDropDown()
+                mEmail.showDropDown()
             }
         }
 
         mEnterButton.setOnClickListener {
             if (isEmailValid() && isPasswordValid()) {
-                val user: User? = mSharedPreferencesHelper.login(
-                    mLoginEditText.text.toString(),
-                    mPasswordEditText.text.toString()
+
+                val request: Request = Request.Builder()
+                    .url(BuildConfig.SERVER_URL + "user/")
+                    .build()
+
+                val client: OkHttpClient = ApiUtils.getBasicAuthClient(
+                    email = mEmail.text.toString(),
+                    password = mPassword.text.toString(),
+                    newInstance = true
                 )
-                if (user != null) {
-                    val startProfileIntent =
-                        Intent(activity, ProfileActivity::class.java)
-                    startProfileIntent.putExtra(
-                        ProfileActivity.USER_KEY, user
-                    )
-                    startActivity(startProfileIntent)
-                    activity!!.finish()
-                } else {
-                    showMessage(R.string.login_error)
-                }
+
+                client.newCall(request = request).enqueue(object : Callback {
+
+                    val handler = Handler(activity!!.mainLooper)
+
+                    override fun onFailure(call: Call, e: IOException) {
+                        handler.post {
+//                            showMessage(R.string.request_error)
+                            Log.e("Hehe", "Error: ${e.localizedMessage}")
+                        }
+                    }
+
+                    override fun onResponse(call: Call, response: Response) {
+                        if (response.isSuccessful) {
+
+                            val gson = Gson()
+                            val json = gson.fromJson(
+                                response.body!!.string(),
+                                JsonObject::class.java
+                            )
+
+                            val userDto =
+                                gson.fromJson(
+                                    json["data"],
+                                    UserDto::class.java
+                                )
+                            val user = userDto.toUser()
+
+                            val startProfileIntent = Intent(activity, ProfileActivity::class.java)
+                            startProfileIntent.putExtra(ProfileActivity.USER_KEY, user)
+                            startActivity(startProfileIntent)
+                            activity?.finish()
+
+                        } else {
+                            handler.post { showMessage(R.string.login_error) }
+                        }
+                    }
+                })
             } else {
                 showMessage(R.string.input_error)
             }
-
-            for (user in mSharedPreferencesHelper.getUsers()) {
-                if (user.mEmail.equals(mLoginEditText.text.toString(), ignoreCase = true)
-                    && user.mPassword == mPasswordEditText.text.toString()
-                ) {
-                    break
-                }
-            }
-
         }
 
         mRegisterButton.setOnClickListener {
+
             fragmentManager!!
                 .beginTransaction()
                 .replace(R.id.fragmentContainer, RegistrationFragment.newInstance())
@@ -103,17 +127,26 @@ class AuthFragment : Fragment() {
     }
 
     private fun isEmailValid(): Boolean {
-        return !TextUtils.isEmpty(mLoginEditText.text)
-                && Patterns.EMAIL_ADDRESS.matcher(mLoginEditText.text).matches()
+        return !TextUtils.isEmpty(mEmail.text)
+                && Patterns.EMAIL_ADDRESS.matcher(mEmail.text).matches()
     }
 
     private fun isPasswordValid(): Boolean {
-        return !TextUtils.isEmpty(mPasswordEditText.text)
+        return !TextUtils.isEmpty(mPassword.text)
     }
 
     private fun showMessage(@StringRes stringId: Int) {
         Toast.makeText(activity, stringId, Toast.LENGTH_LONG).show()
     }
 
+    private fun UserDto.toUser(): User {
+        return User(
+            mEmail = mEmail,
+            mName = mName,
+            mPassword = mPassword,
+            mHasSuccessLogin = mHasSuccessLogin
+        )
+
+    }
 
 }

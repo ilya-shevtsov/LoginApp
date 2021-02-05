@@ -61,7 +61,7 @@ class RegistrationFragment : Fragment() {
                     mPassword = mPassword.text.toString(),
                     mHasSuccessLogin = false
                 )
-                val userDto = toUserDto(user = user)
+                val userDto = user.toUserDto()
 
                 val request: Request = Request.Builder()
                     .url(BuildConfig.SERVER_URL + "registration/")
@@ -75,10 +75,11 @@ class RegistrationFragment : Fragment() {
 
                 client.newCall(request = request).enqueue(object : Callback {
                     val handler = Handler(activity!!.mainLooper)
+
                     override fun onFailure(call: Call, e: IOException) {
                         handler.post {
                             showMassage(R.string.request_error)
-                            Log.e("Haha","Error: ${e.localizedMessage}")
+                            Log.e("Haha", "Error: ${e.localizedMessage}")
                         }
                     }
 
@@ -120,18 +121,17 @@ class RegistrationFragment : Fragment() {
                 && !TextUtils.isEmpty(passwordAgain)
     }
 
-    private fun showMassage(@StringRes stringId: Int) {
+    fun showMassage(@StringRes stringId: Int) {
         Toast.makeText(activity, stringId, Toast.LENGTH_LONG).show()
     }
 
-    private fun toUserDto(user: User): UserDto {
-        return with(user) {
-            UserDto(
-                mEmail = mEmail,
-                mName = mName,
-                mPassword = mPassword,
-                mHasSuccessLogin = mHasSuccessLogin
-            )
-        }
+    private fun User.toUserDto(): UserDto {
+        return UserDto(
+            mEmail = mEmail,
+            mName = mName,
+            mPassword = mPassword,
+            mHasSuccessLogin = mHasSuccessLogin
+        )
+
     }
 }
