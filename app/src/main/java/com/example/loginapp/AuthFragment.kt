@@ -144,7 +144,7 @@ class AuthFragment : Fragment() {
     private fun UserDto.toUser(): User {
         return User(
             email = email,
-            mName = name,
+            name = name,
             password = password,
             hasSuccessLogin = hasSuccessLogin
         )

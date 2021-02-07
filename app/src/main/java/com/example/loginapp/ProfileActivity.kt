@@ -29,7 +29,7 @@ class ProfileActivity : AppCompatActivity() {
         val bundle = intent.extras
         val user: User = bundle?.get(USER_KEY) as User
         login.text = user.email
-        name.text = user.mName
+        name.text = user.name
         currentUser = user
     }
 

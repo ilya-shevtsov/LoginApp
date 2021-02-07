@@ -1,6 +1,7 @@
 package com.example.loginapp.model
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 
 data class AlbumDetails(
@@ -9,14 +10,15 @@ data class AlbumDetails(
     val id:Int = 0,
 
     @SerializedName("name")
-    val name: String? = null,
+    val name: String,
 
     @SerializedName("release_date")
-    val releaseDate: String? = null,
+    val releaseDate: String,
 
     @SerializedName("songs")
-    val songs: List<SongDetails>? = null
-)
+    val songs: List<SongDetails>
+
+) : Serializable
 
 
 

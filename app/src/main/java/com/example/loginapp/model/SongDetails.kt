@@ -5,7 +5,13 @@ import java.io.Serializable
 
 data class SongDetails(
 
-    @SerializedName("id") val mId: String,
-    @SerializedName("name") val mName: String,
-    @SerializedName("duration") val mDuration: String
+    @SerializedName("id")
+    val id: String,
+
+    @SerializedName("name")
+    val name: String,
+
+    @SerializedName("duration")
+    val duration: String
+
 ) : Serializable

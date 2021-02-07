@@ -59,7 +59,7 @@ class RegistrationFragment : Fragment() {
             if (isInputValid()) {
                 val user = User(
                     email = login.text.toString(),
-                    mName = name.text.toString(),
+                    name = name.text.toString(),
                     password = password.text.toString(),
                     hasSuccessLogin = false
                 )
@@ -130,7 +130,7 @@ class RegistrationFragment : Fragment() {
     private fun User.toUserDto(): UserDto {
         return UserDto(
             email = email,
-            name = mName,
+            name = name,
             password = password,
             hasSuccessLogin = hasSuccessLogin
         )
