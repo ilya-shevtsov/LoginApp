@@ -1,4 +1,4 @@
-package com.example.loginapp
+package com.example.loginapp.model
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize

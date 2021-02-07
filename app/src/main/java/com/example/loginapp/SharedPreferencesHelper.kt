@@ -3,6 +3,7 @@ package com.example.loginapp
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import com.example.loginapp.model.User
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type

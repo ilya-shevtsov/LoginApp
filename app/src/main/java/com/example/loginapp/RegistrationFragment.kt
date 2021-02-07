@@ -13,6 +13,8 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
+import com.example.loginapp.model.User
+import com.example.loginapp.model.UserDto
 import com.google.gson.Gson
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
