@@ -46,10 +46,10 @@ class AuthFragment : Fragment() {
 
         val view: View = inflater.inflate(R.layout.fr_auth, container, false)
 
-        mEmail = view.findViewById(R.id.etEmail)
-        mPassword = view.findViewById(R.id.etPassword)
-        mEnterButton = view.findViewById(R.id.buttonEnter)
-        mRegisterButton = view.findViewById(R.id.buttonRegister)
+        mEmail = view.findViewById(R.id.authorizationEmailEditText)
+        mPassword = view.findViewById(R.id.authorizationPasswordEditText)
+        mEnterButton = view.findViewById(R.id.authorizationEnterButton)
+        mRegisterButton = view.findViewById(R.id.authorizationRegistrationButton)
 
         return view
     }
@@ -143,10 +143,10 @@ class AuthFragment : Fragment() {
 
     private fun UserDto.toUser(): User {
         return User(
-            mEmail = mEmail,
-            mName = mName,
-            mPassword = mPassword,
-            mHasSuccessLogin = mHasSuccessLogin
+            email = email,
+            mName = name,
+            password = password,
+            hasSuccessLogin = hasSuccessLogin
         )
 
     }

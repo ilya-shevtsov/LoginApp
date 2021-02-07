@@ -26,12 +26,12 @@ import java.io.IOException
 
 class RegistrationFragment : Fragment() {
 
-    private lateinit var mLogin: EditText
-    private lateinit var mName: EditText
-    private lateinit var mPassword: EditText
-    private lateinit var mPasswordAgain: EditText
-    private lateinit var mRegistration: Button
-    private lateinit var mSharedPreferencesHelper: SharedPreferencesHelper
+    private lateinit var login: EditText
+    private lateinit var name: EditText
+    private lateinit var password: EditText
+    private lateinit var passwordAgain: EditText
+    private lateinit var registration: Button
+    private lateinit var sharedPreferencesHelper: SharedPreferencesHelper
 
 
     companion object {
@@ -48,20 +48,20 @@ class RegistrationFragment : Fragment() {
 
         val view: View = inflater.inflate(R.layout.fr_registration, container, false)
 
-        mName = view.findViewById(R.id.etName)
-        mLogin = view.findViewById(R.id.etEmail)
-        mPassword = view.findViewById(R.id.etPassword)
-        mPasswordAgain = view.findViewById(R.id.etPasswordAgain)
-        mRegistration = view.findViewById(R.id.RegistrationButton)
-        mSharedPreferencesHelper = SharedPreferencesHelper(context!!)
+        name = view.findViewById(R.id.registrationNameEditText)
+        login = view.findViewById(R.id.registrationEmailEditText)
+        password = view.findViewById(R.id.registrationPasswordEditText)
+        passwordAgain = view.findViewById(R.id.registrationPasswordAgainEditText)
+        registration = view.findViewById(R.id.registrationRegistrationButton)
+        sharedPreferencesHelper = SharedPreferencesHelper(context!!)
 
-        mRegistration.setOnClickListener {
+        registration.setOnClickListener {
             if (isInputValid()) {
                 val user = User(
-                    mEmail = mLogin.text.toString(),
-                    mName = mName.text.toString(),
-                    mPassword = mPassword.text.toString(),
-                    mHasSuccessLogin = false
+                    email = login.text.toString(),
+                    mName = name.text.toString(),
+                    password = password.text.toString(),
+                    hasSuccessLogin = false
                 )
                 val userDto = user.toUserDto()
 
@@ -103,7 +103,7 @@ class RegistrationFragment : Fragment() {
     }
 
     private fun isInputValid(): Boolean {
-        val email = mLogin.text.toString()
+        val email = login.text.toString()
         if (isEmailValid(email) && isPasswordValid()) {
             return true
         }
@@ -115,8 +115,8 @@ class RegistrationFragment : Fragment() {
     }
 
     private fun isPasswordValid(): Boolean {
-        val password = mPassword.text.toString()
-        val passwordAgain = mPasswordAgain.text.toString()
+        val password = password.text.toString()
+        val passwordAgain = passwordAgain.text.toString()
 
         return password == passwordAgain
                 && !TextUtils.isEmpty(password)
@@ -129,10 +129,10 @@ class RegistrationFragment : Fragment() {
 
     private fun User.toUserDto(): UserDto {
         return UserDto(
-            mEmail = mEmail,
-            mName = mName,
-            mPassword = mPassword,
-            mHasSuccessLogin = mHasSuccessLogin
+            email = email,
+            name = mName,
+            password = password,
+            hasSuccessLogin = hasSuccessLogin
         )
 
     }

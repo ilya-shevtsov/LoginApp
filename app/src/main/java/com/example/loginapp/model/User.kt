@@ -5,8 +5,8 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class User (
-    var mEmail: String,
+    var email: String,
     var mName: String,
-    var mPassword: String?,
-    var mHasSuccessLogin: Boolean
+    var password: String?,
+    var hasSuccessLogin: Boolean
 ): Parcelable

@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <AutoCompleteTextView
-        android:id="@+id/etEmail"
+        android:id="@+id/authorizationEmailEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
@@ -16,7 +16,7 @@
         android:inputType="textEmailAddress"/>
 
     <EditText
-        android:id="@+id/etPassword"
+        android:id="@+id/authorizationPasswordEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
@@ -33,7 +33,7 @@
 
         <Button
 
-            android:id="@+id/buttonEnter"
+            android:id="@+id/authorizationEnterButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -41,7 +41,7 @@
 
         <Button
 
-            android:id="@+id/buttonRegister"
+            android:id="@+id/authorizationRegistrationButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"

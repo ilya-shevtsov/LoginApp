@@ -16,16 +16,16 @@ class SharedPreferencesHelper constructor(context: Context) {
         val USERS_TYPE: Type = object : TypeToken<List<User>>() {}.type
     }
 
-    private var mSharedPreferences: SharedPreferences
-    private var mGson: Gson = Gson()
+    private var sharedPreferences: SharedPreferences
+    private var gson: Gson = Gson()
 
     init {
-        mSharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE)
+        sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE)
     }
 
     fun getUsers(): List<User> {
-        val users: List<User>? = mGson.fromJson(
-            mSharedPreferences.getString(USERS_KEY, ""),
+        val users: List<User>? = gson.fromJson(
+            sharedPreferences.getString(USERS_KEY, ""),
             USERS_TYPE
         )
         return users.orEmpty()
@@ -34,27 +34,27 @@ class SharedPreferencesHelper constructor(context: Context) {
     fun addUser(newUser: User): Boolean {
         val users: MutableList<User> = getUsers().toMutableList()
         for (oldUser: User in users) {
-            if (oldUser.mEmail.equals(newUser.mEmail, ignoreCase = true)) {
+            if (oldUser.email.equals(newUser.email, ignoreCase = true)) {
                 return false
             }
         }
         users.add(newUser)
-        val userString = mGson.toJson(users, USERS_TYPE)
+        val userString = gson.toJson(users, USERS_TYPE)
         Log.d("KEK", "userString >> $userString <<")
-        mSharedPreferences.edit().putString(USERS_KEY, userString).apply()
+        sharedPreferences.edit().putString(USERS_KEY, userString).apply()
         return true
     }
 
     fun saveOrOverrideUser(newUser: User): Boolean {
         val users = getUsers().toMutableList()
         for (oldUser in users) {
-            if (oldUser.mEmail.equals(newUser.mEmail, ignoreCase = true)) {
+            if (oldUser.email.equals(newUser.email, ignoreCase = true)) {
                 users.remove(oldUser)
                 break
             }
         }
         users.add(newUser)
-        mSharedPreferences.edit().putString(USERS_KEY, mGson.toJson(users, USERS_TYPE)).apply()
+        sharedPreferences.edit().putString(USERS_KEY, gson.toJson(users, USERS_TYPE)).apply()
         return true
     }
 
@@ -62,8 +62,8 @@ class SharedPreferencesHelper constructor(context: Context) {
         val successLogins: MutableList<String> = ArrayList()
         val allUsers = getUsers()
         for (user in allUsers) {
-            if (user.mHasSuccessLogin) {
-                successLogins.add(user.mEmail)
+            if (user.hasSuccessLogin) {
+                successLogins.add(user.email)
             }
         }
         return successLogins
@@ -72,11 +72,11 @@ class SharedPreferencesHelper constructor(context: Context) {
     fun login(login: String, password: String): User? {
         val users = getUsers()
         for (user in users) {
-            if (login.equals(user.mEmail, ignoreCase = true)
-                && password == user.mPassword
+            if (login.equals(user.email, ignoreCase = true)
+                && password == user.password
             ) {
-                user.mHasSuccessLogin = true
-                mSharedPreferences.edit().putString(USERS_KEY, mGson.toJson(users, USERS_TYPE))
+                user.hasSuccessLogin = true
+                sharedPreferences.edit().putString(USERS_KEY, gson.toJson(users, USERS_TYPE))
                     .apply()
                 return user
             }
