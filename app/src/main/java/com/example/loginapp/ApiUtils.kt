@@ -13,6 +13,8 @@ class ApiUtils {
         private var okHttpClient: OkHttpClient? = null
         private var retrofit: Retrofit? = null
         private var gson: Gson? = null
+        private var serverApi: ServerApi? = null
+
 
         fun getBasicAuthClient(
             email: String,
@@ -46,6 +48,12 @@ class ApiUtils {
                     .build()
             }
             return retrofit!!
+        }
+        fun getApiService(): ServerApi{
+            if (serverApi == null){
+                serverApi = getRetrofit().create(ServerApi::class.java)
+            }
+            return serverApi!!
         }
     }
 }

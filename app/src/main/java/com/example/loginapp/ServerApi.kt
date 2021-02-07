@@ -11,7 +11,7 @@ import retrofit2.http.Path
 interface ServerApi {
 
     @POST("registration")
-    fun registration(@Body user: User): Call<Void?>
+    fun registration(@Body user: UserDto): Call<Void>
 
     @GET("albums")
     fun getAlbumsPreview(): Call<AlbumsPreviewResponse>

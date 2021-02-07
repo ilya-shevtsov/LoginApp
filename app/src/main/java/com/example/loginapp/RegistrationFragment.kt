@@ -65,17 +65,8 @@ class RegistrationFragment : Fragment() {
                 )
                 val userDto = user.toUserDto()
 
-                val request: Request = Request.Builder()
-                    .url(BuildConfig.SERVER_URL + "registration/")
-                    .post(Gson().toJson(userDto).toRequestBody(JSON)).build()
-
-                val logging = HttpLoggingInterceptor()
-                logging.setLevel(HttpLoggingInterceptor.Level.BODY)
-                val client = OkHttpClient.Builder()
-                    .addInterceptor(logging)
-                    .build()
-
-                client.newCall(request = request).enqueue(object : Callback {
+                ApiUtils.getApiService().registration(userDto).enqueue()
+                    /*.enqueue(object : Callback {
                     val handler = Handler(activity!!.mainLooper)
 
                     override fun onFailure(call: Call, e: IOException) {
@@ -94,7 +85,7 @@ class RegistrationFragment : Fragment() {
                         }
                     }
 
-                })
+                })*/
             } else {
                 showMassage(R.string.input_error)
             }
