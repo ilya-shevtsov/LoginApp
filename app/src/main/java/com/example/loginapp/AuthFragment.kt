@@ -15,6 +15,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
+import com.example.loginapp.albums.AlbumsActivity
 import com.example.loginapp.model.User
 import com.example.loginapp.model.UserDto
 import com.google.gson.Gson
@@ -96,16 +97,18 @@ class AuthFragment : Fragment() {
                                 JsonObject::class.java
                             )
 
-                            val userDto =
-                                gson.fromJson(
-                                    json["data"],
-                                    UserDto::class.java
-                                )
-                            val user = userDto.toUser()
-
-                            val startProfileIntent = Intent(activity, ProfileActivity::class.java)
-                            startProfileIntent.putExtra(ProfileActivity.USER_KEY, user)
-                            startActivity(startProfileIntent)
+//                            val userDto =
+//                                gson.fromJson(
+//                                    json["data"],
+//                                    UserDto::class.java
+//                                )
+//                            val user = userDto.toUser()
+//
+//                            val startProfileIntent = Intent(activity, ProfileActivity::class.java)
+//                            startProfileIntent.putExtra(ProfileActivity.USER_KEY, user)
+//                            startActivity(startProfileIntent)
+                            val startProfileIntent = Intent(activity, AlbumsActivity::class.java)
+                           startActivity(startProfileIntent)
                             activity?.finish()
 
                         } else {
