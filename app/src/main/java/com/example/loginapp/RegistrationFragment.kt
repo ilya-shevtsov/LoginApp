@@ -15,13 +15,9 @@ import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import com.example.loginapp.model.User
 import com.example.loginapp.model.UserDto
-import com.google.gson.Gson
-import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.OkHttpClient
-import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.logging.HttpLoggingInterceptor
-import java.io.IOException
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class RegistrationFragment : Fragment() {
@@ -35,7 +31,6 @@ class RegistrationFragment : Fragment() {
 
 
     companion object {
-        val JSON: MediaType = "application/json; charset=utf-8".toMediaTypeOrNull()!!
         fun newInstance(): RegistrationFragment {
             return RegistrationFragment()
         }
@@ -65,27 +60,27 @@ class RegistrationFragment : Fragment() {
                 )
                 val userDto = user.toUserDto()
 
-                ApiUtils.getApiService().registration(userDto).enqueue()
-                    /*.enqueue(object : Callback {
-                    val handler = Handler(activity!!.mainLooper)
+                ApiUtils.getApiService().registration(userDto)
+                    .enqueue(object : Callback<Void> {
 
-                    override fun onFailure(call: Call, e: IOException) {
-                        handler.post {
-                            showMassage(R.string.request_error)
-                            Log.e("Haha", "Error: ${e.localizedMessage}")
+                        val handler = Handler(activity!!.mainLooper)
+
+                        override fun onFailure(call: Call<Void>, t: Throwable) {
+                            handler.post {
+                                showMassage(R.string.request_error)
+                                Log.e("Haha", "Error: ${t.localizedMessage}")
+                            }
                         }
-                    }
 
-                    override fun onResponse(call: Call, response: Response) {
-                        if (response.isSuccessful) {
-//                            showMassage(R.string.login_register_success)
-                            fragmentManager!!.popBackStack()
-                        } else {
-                            handler.post { showMassage(R.string.login_error) }
+                        override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                            if (response.isSuccessful) {
+                                showMassage(R.string.login_register_success)
+                                fragmentManager!!.popBackStack()
+                            } else {
+                                handler.post { showMassage(R.string.login_error) }
+                            }
                         }
-                    }
-
-                })*/
+                    })
             } else {
                 showMassage(R.string.input_error)
             }
