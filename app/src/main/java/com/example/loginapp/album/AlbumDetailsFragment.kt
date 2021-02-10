@@ -18,8 +18,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.lang.Exception
 
-
 class AlbumDetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
+
     private lateinit var recycler: RecyclerView
     private lateinit var errorView: View
     private lateinit var refresher: SwipeRefreshLayout
@@ -61,11 +61,10 @@ class AlbumDetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         errorView = view.findViewById(R.id.errorView)
     }
 
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        album = arguments!!.getSerializable(ALBUM_KEY) as AlbumsPreview // ARE YOU SURE ABOUT THAT?
+        album = arguments!!.getSerializable(ALBUM_KEY) as AlbumsPreview
 
         activity!!.title = album.name
         recycler.layoutManager = LinearLayoutManager(activity)
@@ -91,7 +90,7 @@ class AlbumDetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                     try {
                         errorView.visibility = View.GONE
                         recycler.visibility = View.VISIBLE
-                        songsAdapter.addData(response.body()!!.data.songs,true)
+                        songsAdapter.addData(response.body()!!.data.songs, true)
                     } catch (e: Exception) {
                         errorView.visibility = View.VISIBLE
                         recycler.visibility = View.GONE

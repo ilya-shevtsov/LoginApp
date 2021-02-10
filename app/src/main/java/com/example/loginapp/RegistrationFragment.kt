@@ -19,7 +19,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-
 class RegistrationFragment : Fragment() {
 
     private lateinit var login: EditText
@@ -28,7 +27,6 @@ class RegistrationFragment : Fragment() {
     private lateinit var passwordAgain: EditText
     private lateinit var registration: Button
     private lateinit var sharedPreferencesHelper: SharedPreferencesHelper
-
 
     companion object {
         fun newInstance(): RegistrationFragment {
@@ -120,6 +118,5 @@ class RegistrationFragment : Fragment() {
             password = password,
             hasSuccessLogin = hasSuccessLogin
         )
-
     }
 }

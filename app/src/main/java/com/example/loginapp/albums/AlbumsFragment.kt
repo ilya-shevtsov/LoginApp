@@ -18,7 +18,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.lang.Exception
 
-
 class AlbumsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     private lateinit var recycler: RecyclerView
@@ -71,7 +70,6 @@ class AlbumsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     private fun getAlbums() {
         ApiUtils.getApiService().getAlbumsPreview()
             .enqueue(object : Callback<AlbumsPreviewResponse> {
-
                 override fun onFailure(call: Call<AlbumsPreviewResponse>, t: Throwable?) {
                     errorView.visibility = View.VISIBLE
                     recycler.visibility = View.GONE
@@ -92,7 +90,6 @@ class AlbumsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                         recycler.visibility = View.GONE
                         Log.e(tag, "ERROR: ${e.localizedMessage}")
                     }
-
                     refresher.isRefreshing = false
                 }
             })

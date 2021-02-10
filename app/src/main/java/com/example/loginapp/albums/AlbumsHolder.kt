@@ -1,7 +1,6 @@
 package com.example.loginapp.albums
 
 import android.view.View
-import android.widget.AdapterView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.loginapp.R

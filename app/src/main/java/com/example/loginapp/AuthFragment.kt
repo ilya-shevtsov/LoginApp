@@ -23,7 +23,6 @@ import com.google.gson.JsonObject
 import okhttp3.*
 import java.io.IOException
 
-
 class AuthFragment : Fragment() {
 
     private lateinit var mEmail: AutoCompleteTextView
@@ -83,7 +82,7 @@ class AuthFragment : Fragment() {
 
                     override fun onFailure(call: Call, e: IOException) {
                         handler.post {
-//                            showMessage(R.string.request_error)
+                            showMessage(R.string.request_error)
                             Log.e("Hehe", "Error: ${e.localizedMessage}")
                         }
                     }
@@ -91,12 +90,12 @@ class AuthFragment : Fragment() {
                     override fun onResponse(call: Call, response: Response) {
                         if (response.isSuccessful) {
 
-                            val gson = Gson()
-                            val json = gson.fromJson(
-                                response.body!!.string(),
-                                JsonObject::class.java
-                            )
-
+//                            val gson = Gson()
+//                            val json = gson.fromJson(
+//                                response.body!!.string(),
+//                                JsonObject::class.java
+//                            )
+//
 //                            val userDto =
 //                                gson.fromJson(
 //                                    json["data"],
@@ -151,7 +150,5 @@ class AuthFragment : Fragment() {
             password = password,
             hasSuccessLogin = hasSuccessLogin
         )
-
     }
-
 }

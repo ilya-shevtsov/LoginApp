@@ -6,7 +6,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-
 class ApiUtils {
     companion object {
 
@@ -14,7 +13,6 @@ class ApiUtils {
         private var retrofit: Retrofit? = null
         private var gson: Gson? = null
         private var serverApi: ServerApi? = null
-
 
         fun getBasicAuthClient(
             email: String,
@@ -37,7 +35,7 @@ class ApiUtils {
         }
 
         fun getRetrofit(): Retrofit {
-            if (gson == null){
+            if (gson == null) {
                 gson = Gson()
             }
             if (retrofit == null) {
@@ -49,8 +47,9 @@ class ApiUtils {
             }
             return retrofit!!
         }
-        fun getApiService(): ServerApi{
-            if (serverApi == null){
+
+        fun getApiService(): ServerApi {
+            if (serverApi == null) {
                 serverApi = getRetrofit().create(ServerApi::class.java)
             }
             return serverApi!!

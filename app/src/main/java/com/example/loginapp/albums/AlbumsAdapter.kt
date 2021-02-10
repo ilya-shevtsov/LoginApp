@@ -8,14 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.loginapp.R
 import com.example.loginapp.model.AlbumsPreview
 
-
 class AlbumsAdapter(
     private val onItemClicked: (item: AlbumsPreview) -> Unit
 ) : RecyclerView.Adapter<AlbumsHolder>() {
 
     private var albumsList: List<AlbumsPreview> = mutableListOf()
     private lateinit var view: View
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlbumsHolder {
         val inflater: LayoutInflater = LayoutInflater.from(parent.context)
@@ -40,6 +38,5 @@ class AlbumsAdapter(
         albumsList = albumsList + data
         notifyDataSetChanged()
     }
-
 }
 

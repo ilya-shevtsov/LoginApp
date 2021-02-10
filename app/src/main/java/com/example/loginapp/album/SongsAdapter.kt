@@ -29,7 +29,6 @@ class SongsAdapter: RecyclerView.Adapter<SongsHolder>() {
         holder.bind(song)
 //        holder.bind(song, onItemClicked)
 
-
     }
 
     override fun getItemCount(): Int {
@@ -43,6 +42,5 @@ class SongsAdapter: RecyclerView.Adapter<SongsHolder>() {
         songsList = songsList + data
         notifyDataSetChanged()
     }
-
 }
 
