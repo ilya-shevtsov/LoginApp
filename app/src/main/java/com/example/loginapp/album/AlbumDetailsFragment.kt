@@ -1,6 +1,7 @@
 package com.example.loginapp.album
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import com.example.loginapp.model.AlbumsPreview
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.Exception
 
 
 class AlbumDetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
@@ -25,9 +27,9 @@ class AlbumDetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     private val songsAdapter: SongsAdapter = SongsAdapter()
 
-//    private val albumsAdapter: AlbumsAdapter = AlbumsAdapter(onItemClicked = { album ->
+//    private val songsAdapter: SongsAdapter = SongsAdapter(onItemClicked = { song ->
 //        fragmentManager!!.beginTransaction()
-//            .replace(R.id.fragmentContainer, newInstance(album))
+//            .replace(R.id.fragmentContainer, AlbumDetailsFragment.newInstance(song))
 //            .addToBackStack(AlbumDetailsFragment::class.java.simpleName)
 //            .commit()
 //    })
@@ -86,18 +88,21 @@ class AlbumDetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                     call: Call<AlbumDetailsResponse>,
                     response: Response<AlbumDetailsResponse>
                 ) {
-                    if (response.isSuccessful) {
+                    try {
                         errorView.visibility = View.GONE
                         recycler.visibility = View.VISIBLE
-                        songsAdapter.addData(response.body()!!.data.songs, true)
-                    } else {
+                        songsAdapter.addData(response.body()!!.data.songs,true)
+                    } catch (e: Exception) {
                         errorView.visibility = View.VISIBLE
                         recycler.visibility = View.GONE
+                        Log.e(tag, "ERROR: ${e.localizedMessage}")
                     }
                     refresher.isRefreshing = false
                 }
 
                 override fun onFailure(call: Call<AlbumDetailsResponse>, t: Throwable) {
+                    Log.e(tag, "error: ${t.message}")
+
                     errorView.visibility = View.VISIBLE
                     recycler.visibility = View.GONE
                     refresher.isRefreshing = false

@@ -1,6 +1,7 @@
 package com.example.loginapp.albums
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,13 +16,14 @@ import com.example.loginapp.model.AlbumsPreviewResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.Exception
 
 
 class AlbumsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     private lateinit var recycler: RecyclerView
     private lateinit var errorView: View
-    private val albumsAdapter: AlbumsAdapter = AlbumsAdapter(onItemClicked = {album ->
+    private val albumsAdapter: AlbumsAdapter = AlbumsAdapter(onItemClicked = { album ->
         fragmentManager!!.beginTransaction()
             .replace(R.id.fragmentContainer, AlbumDetailsFragment.newInstance(album))
             .addToBackStack(AlbumDetailsFragment::class.java.simpleName)
@@ -74,20 +76,23 @@ class AlbumsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                     errorView.visibility = View.VISIBLE
                     recycler.visibility = View.GONE
                     refresher.isRefreshing = false
+                    Log.e(tag, "ERROR: $t")
                 }
 
                 override fun onResponse(
                     call: Call<AlbumsPreviewResponse>,
                     response: Response<AlbumsPreviewResponse>
                 ) {
-                    if (response.isSuccessful) {
+                    try {
                         errorView.visibility = View.GONE
                         recycler.visibility = View.VISIBLE
                         albumsAdapter.addData(response.body()!!.data, true)
-                    } else {
+                    } catch (e: Exception) {
                         errorView.visibility = View.VISIBLE
                         recycler.visibility = View.GONE
+                        Log.e(tag, "ERROR: ${e.localizedMessage}")
                     }
+
                     refresher.isRefreshing = false
                 }
             })

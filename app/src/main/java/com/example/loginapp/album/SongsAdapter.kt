@@ -27,8 +27,7 @@ class SongsAdapter: RecyclerView.Adapter<SongsHolder>() {
     override fun onBindViewHolder(holder: SongsHolder, position: Int) {
         val song: SongDetails = songsList[position]
         holder.bind(song)
-//        holder.bind(song,onItemClicked)
-
+//        holder.bind(song, onItemClicked)
 
 
     }
