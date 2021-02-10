@@ -3,15 +3,19 @@ package com.example.loginapp.albums
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.loginapp.R
 import com.example.loginapp.model.AlbumsPreview
 
 
-class AlbumsAdapter : RecyclerView.Adapter<AlbumsHolder>() {
+class AlbumsAdapter(
+    private val onItemClicked: (item: AlbumsPreview) -> Unit
+) : RecyclerView.Adapter<AlbumsHolder>() {
 
     private var albumsList: List<AlbumsPreview> = mutableListOf()
     private lateinit var view: View
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlbumsHolder {
         val inflater: LayoutInflater = LayoutInflater.from(parent.context)
@@ -19,12 +23,14 @@ class AlbumsAdapter : RecyclerView.Adapter<AlbumsHolder>() {
         return AlbumsHolder(view)
     }
 
-    override fun getItemCount(): Int {
-        return albumsList.size
+    override fun onBindViewHolder(holder: AlbumsHolder, position: Int) {
+        val album: AlbumsPreview = albumsList[position]
+        holder.bind(album, onItemClicked)
+
     }
 
-    override fun onBindViewHolder(holder: AlbumsHolder, position: Int) {
-        holder.bind(albumsList[position])
+    override fun getItemCount(): Int {
+        return albumsList.size
     }
 
     fun addData(data: List<AlbumsPreview>, refresh: Boolean) {

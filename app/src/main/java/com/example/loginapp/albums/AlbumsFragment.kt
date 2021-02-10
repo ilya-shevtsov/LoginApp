@@ -19,7 +19,9 @@ class AlbumsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     private lateinit var recycler: RecyclerView
     private lateinit var errorView: View
-    private val albumsAdapter: AlbumsAdapter = AlbumsAdapter()
+    private val albumsAdapter: AlbumsAdapter = AlbumsAdapter(onItemClicked = {item ->
+
+    })
     private lateinit var refresher: SwipeRefreshLayout
 
     companion object {
@@ -37,14 +39,19 @@ class AlbumsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        errorView = view.findViewById(R.id.errorView)
         recycler = view.findViewById(R.id.recycler)
         refresher = view.findViewById(R.id.refresher)
+        refresher.setOnRefreshListener(this)
+        errorView = view.findViewById(R.id.errorView)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        activity.setTitle()
         recycler.layoutManager = LinearLayoutManager(activity)
         recycler.adapter = albumsAdapter
-        refresher.setOnRefreshListener {
-            onRefresh()
-        }
+
+        onRefresh()
 
     }
 
