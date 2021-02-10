@@ -56,9 +56,7 @@ class AlbumsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         activity!!.setTitle(R.string.albums)
         recycler.layoutManager = LinearLayoutManager(activity)
         recycler.adapter = albumsAdapter
-
         onRefresh()
-
     }
 
     override fun onRefresh() {

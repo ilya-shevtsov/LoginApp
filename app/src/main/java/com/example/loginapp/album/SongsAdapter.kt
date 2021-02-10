@@ -5,10 +5,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.loginapp.R
+import com.example.loginapp.albums.AlbumsHolder
 import com.example.loginapp.model.AlbumsPreview
 import com.example.loginapp.model.SongDetails
 
 class SongsAdapter: RecyclerView.Adapter<SongsHolder>() {
+
+//class SongsAdapter(private val onItemClicked: (item: SongDetails) -> Unit) :
+//    RecyclerView.Adapter<SongsHolder>() {
 
     private var songsList: List<SongDetails> = mutableListOf()
     private lateinit var view: View
@@ -23,6 +27,9 @@ class SongsAdapter: RecyclerView.Adapter<SongsHolder>() {
     override fun onBindViewHolder(holder: SongsHolder, position: Int) {
         val song: SongDetails = songsList[position]
         holder.bind(song)
+//        holder.bind(song,onItemClicked)
+
+
 
     }
 

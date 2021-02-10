@@ -8,9 +8,13 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.loginapp.ApiUtils
 import com.example.loginapp.R
-import com.example.loginapp.albums.AlbumsFragment
+import com.example.loginapp.model.AlbumDetailsResponse
 import com.example.loginapp.model.AlbumsPreview
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class AlbumDetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
@@ -19,22 +23,26 @@ class AlbumDetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     private lateinit var refresher: SwipeRefreshLayout
     private lateinit var album: AlbumsPreview
 
-    private val mSongsAdapter = SongsAdapter()
-    companion object{
+    private val songsAdapter: SongsAdapter = SongsAdapter()
+
+//    private val albumsAdapter: AlbumsAdapter = AlbumsAdapter(onItemClicked = { album ->
+//        fragmentManager!!.beginTransaction()
+//            .replace(R.id.fragmentContainer, newInstance(album))
+//            .addToBackStack(AlbumDetailsFragment::class.java.simpleName)
+//            .commit()
+//    })
+
+    companion object {
         private const val ALBUM_KEY = "ALBUM_KEY"
 
         fun newInstance(newInstanceAlbum: AlbumsPreview): AlbumDetailsFragment {
             val args = Bundle()
-            args.putSerializable(ALBUM_KEY, newInstanceAlbum)
             val fragment = AlbumDetailsFragment()
+            args.putSerializable(ALBUM_KEY, newInstanceAlbum)
             fragment.arguments = args
             return fragment
         }
     }
-
-
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,12 +62,13 @@ class AlbumDetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        activity!!.setTitle(R.string.albums)
+
+        album = arguments!!.getSerializable(ALBUM_KEY) as AlbumsPreview // ARE YOU SURE ABOUT THAT?
+
+        activity!!.title = album.name
         recycler.layoutManager = LinearLayoutManager(activity)
-        recycler.adapter = albumsAdapter
-
+        recycler.adapter = songsAdapter
         onRefresh()
-
     }
 
     override fun onRefresh() {
@@ -67,5 +76,32 @@ class AlbumDetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             refresher.isRefreshing = true
             getAlbums()
         }
+    }
+
+    private fun getAlbums() {
+        ApiUtils.getApiService().getAlbumDetails(album.id)
+            .enqueue(object : Callback<AlbumDetailsResponse> {
+
+                override fun onResponse(
+                    call: Call<AlbumDetailsResponse>,
+                    response: Response<AlbumDetailsResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        errorView.visibility = View.GONE
+                        recycler.visibility = View.VISIBLE
+                        songsAdapter.addData(response.body()!!.data.songs, true)
+                    } else {
+                        errorView.visibility = View.VISIBLE
+                        recycler.visibility = View.GONE
+                    }
+                    refresher.isRefreshing = false
+                }
+
+                override fun onFailure(call: Call<AlbumDetailsResponse>, t: Throwable) {
+                    errorView.visibility = View.VISIBLE
+                    recycler.visibility = View.GONE
+                    refresher.isRefreshing = false
+                }
+            })
     }
 }
