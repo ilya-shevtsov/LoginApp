@@ -10,18 +10,24 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.loginapp.ApiUtils
 import com.example.loginapp.R
+import com.example.loginapp.album.AlbumDetailsFragment
 import com.example.loginapp.model.AlbumsPreviewResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+
 class AlbumsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     private lateinit var recycler: RecyclerView
     private lateinit var errorView: View
-    private val albumsAdapter: AlbumsAdapter = AlbumsAdapter(onItemClicked = {item ->
-
+    private val albumsAdapter: AlbumsAdapter = AlbumsAdapter(onItemClicked = {album ->
+        fragmentManager!!.beginTransaction()
+            .replace(R.id.fragmentContainer, AlbumDetailsFragment.newInstance(album))
+            .addToBackStack(AlbumDetailsFragment::class.java.simpleName)
+            .commit()
     })
+
     private lateinit var refresher: SwipeRefreshLayout
 
     companion object {
@@ -47,7 +53,7 @@ class AlbumsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        activity.setTitle()
+        activity!!.setTitle(R.string.albums)
         recycler.layoutManager = LinearLayoutManager(activity)
         recycler.adapter = albumsAdapter
 
