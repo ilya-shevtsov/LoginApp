@@ -1,4 +1,4 @@
-package com.example.loginapp.album
+package com.example.loginapp.albumsPreview
 
 import android.os.Bundle
 import android.util.Log
@@ -11,38 +11,29 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.loginapp.ApiUtils
 import com.example.loginapp.R
-import com.example.loginapp.model.AlbumDetailsResponse
-import com.example.loginapp.model.AlbumsPreview
+import com.example.loginapp.albumDetails.AlbumDetailsFragment
+import com.example.loginapp.modelClasses.AlbumsPreviewResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.lang.Exception
 
-class AlbumDetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
+class AlbumsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     private lateinit var recycler: RecyclerView
     private lateinit var errorView: View
+    private val albumsAdapter: AlbumsAdapter = AlbumsAdapter(onItemClicked = { album ->
+        fragmentManager!!.beginTransaction()
+            .replace(R.id.fragmentContainer, AlbumDetailsFragment.newInstance(album))
+            .addToBackStack(AlbumDetailsFragment::class.java.simpleName)
+            .commit()
+    })
+
     private lateinit var refresher: SwipeRefreshLayout
-    private lateinit var album: AlbumsPreview
-
-    private val songsAdapter: SongsAdapter = SongsAdapter()
-
-//    private val songsAdapter: SongsAdapter = SongsAdapter(onItemClicked = { song ->
-//        fragmentManager!!.beginTransaction()
-//            .replace(R.id.fragmentContainer, AlbumDetailsFragment.newInstance(song))
-//            .addToBackStack(AlbumDetailsFragment::class.java.simpleName)
-//            .commit()
-//    })
 
     companion object {
-        private const val ALBUM_KEY = "ALBUM_KEY"
-
-        fun newInstance(newInstanceAlbum: AlbumsPreview): AlbumDetailsFragment {
-            val args = Bundle()
-            val fragment = AlbumDetailsFragment()
-            args.putSerializable(ALBUM_KEY, newInstanceAlbum)
-            fragment.arguments = args
-            return fragment
+        fun newInstance(): AlbumsFragment {
+            return AlbumsFragment()
         }
     }
 
@@ -63,12 +54,9 @@ class AlbumDetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
-        album = arguments!!.getSerializable(ALBUM_KEY) as AlbumsPreview
-
-        activity!!.title = album.name
+        activity!!.setTitle(R.string.albums)
         recycler.layoutManager = LinearLayoutManager(activity)
-        recycler.adapter = songsAdapter
+        recycler.adapter = albumsAdapter
         onRefresh()
     }
 
@@ -80,30 +68,28 @@ class AlbumDetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     }
 
     private fun getAlbums() {
-        ApiUtils.getApiService().getAlbumDetails(album.id)
-            .enqueue(object : Callback<AlbumDetailsResponse> {
+        ApiUtils.getApiService().getAlbumsPreview()
+            .enqueue(object : Callback<AlbumsPreviewResponse> {
+                override fun onFailure(call: Call<AlbumsPreviewResponse>, t: Throwable?) {
+                    errorView.visibility = View.VISIBLE
+                    recycler.visibility = View.GONE
+                    refresher.isRefreshing = false
+                    Log.e(tag, "ERROR: $t")
+                }
 
                 override fun onResponse(
-                    call: Call<AlbumDetailsResponse>,
-                    response: Response<AlbumDetailsResponse>
+                    call: Call<AlbumsPreviewResponse>,
+                    response: Response<AlbumsPreviewResponse>
                 ) {
                     try {
                         errorView.visibility = View.GONE
                         recycler.visibility = View.VISIBLE
-                        songsAdapter.addData(response.body()!!.data.songs, true)
+                        albumsAdapter.addData(response.body()!!.data, true)
                     } catch (e: Exception) {
                         errorView.visibility = View.VISIBLE
                         recycler.visibility = View.GONE
                         Log.e(tag, "ERROR: ${e.localizedMessage}")
                     }
-                    refresher.isRefreshing = false
-                }
-
-                override fun onFailure(call: Call<AlbumDetailsResponse>, t: Throwable) {
-                    Log.e(tag, "error: ${t.message}")
-
-                    errorView.visibility = View.VISIBLE
-                    recycler.visibility = View.GONE
                     refresher.isRefreshing = false
                 }
             })

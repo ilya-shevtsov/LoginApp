@@ -1,4 +1,4 @@
-package com.example.loginapp.albums
+package com.example.loginapp.albumsPreview
 
 import androidx.fragment.app.Fragment
 import com.example.loginapp.SingleFragmentActivity

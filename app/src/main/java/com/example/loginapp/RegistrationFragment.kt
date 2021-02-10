@@ -13,8 +13,8 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
-import com.example.loginapp.model.User
-import com.example.loginapp.model.UserDto
+import com.example.loginapp.modelClasses.User
+import com.example.loginapp.modelClasses.UserDto
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

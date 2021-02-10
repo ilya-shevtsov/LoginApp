@@ -1,13 +1,11 @@
-package com.example.loginapp.album
+package com.example.loginapp.albumDetails
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.loginapp.R
-import com.example.loginapp.albums.AlbumsHolder
-import com.example.loginapp.model.AlbumsPreview
-import com.example.loginapp.model.SongDetails
+import com.example.loginapp.modelClasses.SongDetails
 
 class SongsAdapter: RecyclerView.Adapter<SongsHolder>() {
 

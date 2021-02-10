@@ -15,11 +15,9 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
-import com.example.loginapp.albums.AlbumsActivity
-import com.example.loginapp.model.User
-import com.example.loginapp.model.UserDto
-import com.google.gson.Gson
-import com.google.gson.JsonObject
+import com.example.loginapp.albumsPreview.AlbumsActivity
+import com.example.loginapp.modelClasses.User
+import com.example.loginapp.modelClasses.UserDto
 import okhttp3.*
 import java.io.IOException
 

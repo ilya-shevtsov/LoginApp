@@ -1,10 +1,10 @@
-package com.example.loginapp.albums
+package com.example.loginapp.albumsPreview
 
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.loginapp.R
-import com.example.loginapp.model.AlbumsPreview
+import com.example.loginapp.modelClasses.AlbumsPreview
 import kotlinx.android.extensions.LayoutContainer
 
 class AlbumsHolder(

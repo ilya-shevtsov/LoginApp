@@ -1,4 +1,4 @@
-package com.example.loginapp.model
+package com.example.loginapp.modelClasses
 
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable

@@ -7,7 +7,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.example.loginapp.model.User
+import com.example.loginapp.modelClasses.User
 
 class ProfileActivity : AppCompatActivity() {
 

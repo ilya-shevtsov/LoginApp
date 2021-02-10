@@ -21,7 +21,7 @@
         </activity>
         <activity android:name=".ProfileActivity">
         </activity>
-        <activity android:name=".albums.AlbumsActivity">
+        <activity android:name=".albumsPreview.AlbumsActivity">
         </activity>
 
 

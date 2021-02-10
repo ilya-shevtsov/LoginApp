@@ -1,7 +1,6 @@
 package com.example.loginapp
 
-import com.example.loginapp.model.*
-import okhttp3.ResponseBody
+import com.example.loginapp.modelClasses.*
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET

@@ -1,12 +1,11 @@
-package com.example.loginapp.albums
+package com.example.loginapp.albumsPreview
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.loginapp.R
-import com.example.loginapp.model.AlbumsPreview
+import com.example.loginapp.modelClasses.AlbumsPreview
 
 class AlbumsAdapter(
     private val onItemClicked: (item: AlbumsPreview) -> Unit
