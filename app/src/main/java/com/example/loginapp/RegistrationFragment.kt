@@ -1,7 +1,6 @@
 package com.example.loginapp
 
 import android.os.Bundle
-import android.os.Handler
 import android.text.TextUtils
 import android.util.Log
 import android.util.Patterns
@@ -15,9 +14,9 @@ import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import com.example.loginapp.modelClasses.User
 import com.example.loginapp.modelClasses.UserDto
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 
 class RegistrationFragment : Fragment() {
 
@@ -58,26 +57,16 @@ class RegistrationFragment : Fragment() {
                 )
                 val userDto = user.toUserDto()
 
-                ApiUtils.getApiService().registration(userDto)
-                    .enqueue(object : Callback<Void> {
-
-                        val handler = Handler(activity!!.mainLooper)
-
-                        override fun onFailure(call: Call<Void>, t: Throwable) {
-                            handler.post {
-                                showMassage(R.string.request_error)
-                                Log.e("Haha", "Error: ${t.localizedMessage}")
-                            }
-                        }
-
-                        override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                            if (response.isSuccessful) {
-                                showMassage(R.string.login_register_success)
-                                fragmentManager!!.popBackStack()
-                            } else {
-                                handler.post { showMassage(R.string.login_error) }
-                            }
-                        }
+                ApiUtils.getApiService()
+                    .registration(userDto)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeBy(onComplete = {
+                        showMassage(R.string.login_register_success)
+                        fragmentManager!!.popBackStack()
+                    }, onError = {
+                        showMassage(R.string.request_error)
+                        Log.e("Haha", "Error: ${it.localizedMessage}")
                     })
             } else {
                 showMassage(R.string.input_error)

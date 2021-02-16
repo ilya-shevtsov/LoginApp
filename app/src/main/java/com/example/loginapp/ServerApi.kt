@@ -1,6 +1,7 @@
 package com.example.loginapp
 
 import com.example.loginapp.modelClasses.*
+import io.reactivex.Completable
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -11,7 +12,7 @@ import retrofit2.http.Path
 interface ServerApi {
 
     @POST("registration")
-    fun registration(@Body user: UserDto): Call<Void>
+    fun registration(@Body user: UserDto): Completable
 
     @GET("albums")
     fun getAlbumsPreview(): Call<AlbumsPreviewResponse>
