@@ -8,7 +8,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
 
-class SharedPreferencesHelper constructor(context: Context) {
+class ZSharedPreferencesHelper constructor(context: Context) {
 
     companion object {
         const val SHARED_PREF_NAME = "SHARED_PREF_NAME"

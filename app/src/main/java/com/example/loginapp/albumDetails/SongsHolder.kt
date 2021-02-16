@@ -15,18 +15,9 @@ class SongsHolder(
     private val duration: TextView =
         containerView.findViewById(R.id.listItemSongDurationTextView)
 
-
     fun bind(item: SongDetails) {
         title.text = item.name
         duration.text = item.duration
 
     }
 }
-
-//    fun bind(item: SongDetails,onItemClicked:(item:SongDetails)->Unit) {
-//        title.text = item.name
-//        duration.text = item.duration
-//        containerView.setOnClickListener {
-//            onItemClicked.invoke(item)
-//        }
-//    }

@@ -12,12 +12,11 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.loginapp.ApiUtils
 import com.example.loginapp.R
-import com.example.loginapp.modelClasses.AlbumDetailsResponse
+import com.example.loginapp.disposeOnDestroy
 import com.example.loginapp.modelClasses.AlbumsPreview
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.lang.Exception
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 
 class AlbumDetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
@@ -32,10 +31,10 @@ class AlbumDetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         private const val ALBUM_KEY = "ALBUM_KEY"
 
         fun newInstance(newInstanceAlbum: AlbumsPreview): AlbumDetailsFragment {
-            val args = Bundle()
+            val arguments = Bundle()
             val fragment = AlbumDetailsFragment()
-            args.putSerializable(ALBUM_KEY, newInstanceAlbum)
-            fragment.arguments = args
+            arguments.putSerializable(ALBUM_KEY, newInstanceAlbum)
+            fragment.arguments = arguments
             return fragment
         }
     }
@@ -45,21 +44,19 @@ class AlbumDetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fr_recycler, container, false)
+        return inflater.inflate(R.layout.fragment_albums_preview, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        recycler = view.findViewById(R.id.recycler)
-        refresher = view.findViewById(R.id.refresher)
+        recycler = view.findViewById(R.id.fragmentAlbumsPreviewRecycler)
+        refresher = view.findViewById(R.id.fragmentAlbumsPreviewRefresher)
         refresher.setOnRefreshListener(this)
         errorView = view.findViewById(R.id.errorView)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
         album = arguments!!.getSerializable(ALBUM_KEY) as AlbumsPreview
-
         activity!!.title = album.name
         recycler.layoutManager = LinearLayoutManager(activity)
         recycler.adapter = songsAdapter
@@ -68,38 +65,31 @@ class AlbumDetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     override fun onRefresh() {
         refresher.post {
-            refresher.isRefreshing = true
             getAlbums()
         }
     }
 
     private fun getAlbums() {
-        ApiUtils.getApiService().getAlbumDetails(album.id)
-            .enqueue(object : Callback<AlbumDetailsResponse> {
-
-                override fun onResponse(
-                    call: Call<AlbumDetailsResponse>,
-                    response: Response<AlbumDetailsResponse>
-                ) {
-                    try {
-                        errorView.isVisible = false
-                        recycler.isVisible = true
-                        songsAdapter.addData(response.body()!!.data.songs, true)
-                    } catch (e: Exception) {
-                        errorView.isVisible = true
-                        recycler.isVisible = false
-                        Log.e(tag, "ERROR: ${e.localizedMessage}")
-                    }
-                    refresher.isRefreshing = false
-                }
-
-                override fun onFailure(call: Call<AlbumDetailsResponse>, t: Throwable) {
-                    Log.e(tag, "error: ${t.message}")
-
-                    errorView.visibility = View.VISIBLE
-                    recycler.visibility = View.GONE
-                    refresher.isRefreshing = false
-                }
-            })
+        ApiUtils.getApiService()
+            .getAlbumDetails(album.id)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { refresher.isRefreshing = true }
+            .doFinally { refresher.isRefreshing = false }
+            .subscribeBy(
+                onSuccess = { albumsDetailsResponse ->
+                    errorView.isVisible = false
+                    recycler.isVisible = true
+                    songsAdapter.addData(albumsDetailsResponse.data.songs, true)
+                },
+                onError = {
+                    errorView.isVisible = true
+                    recycler.isVisible = false
+                    Log.e(
+                        "AlbumDetailsFragment",
+                        "AlbumDetailsRequestError: ${it.localizedMessage}"
+                    )
+                })
+            .disposeOnDestroy(viewLifecycleOwner)
     }
 }

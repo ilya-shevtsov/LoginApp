@@ -7,7 +7,7 @@ import com.example.loginapp.R
 import com.example.loginapp.modelClasses.AlbumsPreview
 import kotlinx.android.extensions.LayoutContainer
 
-class AlbumsHolder(
+class AlbumsPreviewHolder(
     override val containerView: View
 ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 

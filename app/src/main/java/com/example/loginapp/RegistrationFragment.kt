@@ -37,7 +37,7 @@ class RegistrationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        val view: View = inflater.inflate(R.layout.fr_registration, container, false)
+        val view: View = inflater.inflate(R.layout.fragment_registration, container, false)
 
         name = view.findViewById(R.id.registrationNameEditText)
         login = view.findViewById(R.id.registrationEmailEditText)

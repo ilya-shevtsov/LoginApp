@@ -9,9 +9,6 @@ import com.example.loginapp.modelClasses.SongDetails
 
 class SongsAdapter: RecyclerView.Adapter<SongsHolder>() {
 
-//class SongsAdapter(private val onItemClicked: (item: SongDetails) -> Unit) :
-//    RecyclerView.Adapter<SongsHolder>() {
-
     private var songsList: List<SongDetails> = mutableListOf()
     private lateinit var view: View
 
@@ -25,8 +22,6 @@ class SongsAdapter: RecyclerView.Adapter<SongsHolder>() {
     override fun onBindViewHolder(holder: SongsHolder, position: Int) {
         val song: SongDetails = songsList[position]
         holder.bind(song)
-//        holder.bind(song, onItemClicked)
-
     }
 
     override fun getItemCount(): Int {

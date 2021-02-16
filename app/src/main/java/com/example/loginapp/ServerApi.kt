@@ -13,7 +13,7 @@ import retrofit2.http.Path
 interface ServerApi {
 
     @GET("user/")
-    fun enterUser(): Single<UserDtoResponse>
+    fun enterUser(): Single<UserDto>
 
     @POST("registration")
     fun registration(@Body user: UserDto): Completable
@@ -22,7 +22,7 @@ interface ServerApi {
     fun getAlbumsPreview(): Single<AlbumsPreviewResponse>
 
     @GET("albums/{id}")
-    fun getAlbumDetails(@Path("id") id: Int): Call<AlbumDetailsResponse>
+    fun getAlbumDetails(@Path("id") id: Int): Single<AlbumDetailsResponse>
 
     @GET("songs")
     fun getSongs(): Call<SongsResponse>
