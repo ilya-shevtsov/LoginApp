@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -12,11 +13,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.loginapp.ApiUtils
 import com.example.loginapp.R
 import com.example.loginapp.albumDetails.AlbumDetailsFragment
-import com.example.loginapp.modelClasses.AlbumsPreviewResponse
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.lang.Exception
+import com.example.loginapp.disposeOnDestroy
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 
 class AlbumsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
@@ -68,30 +68,20 @@ class AlbumsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     }
 
     private fun getAlbums() {
-        ApiUtils.getApiService().getAlbumsPreview()
-            .enqueue(object : Callback<AlbumsPreviewResponse> {
-                override fun onFailure(call: Call<AlbumsPreviewResponse>, t: Throwable?) {
-                    errorView.visibility = View.VISIBLE
-                    recycler.visibility = View.GONE
-                    refresher.isRefreshing = false
-                    Log.e(tag, "ERROR: $t")
-                }
-
-                override fun onResponse(
-                    call: Call<AlbumsPreviewResponse>,
-                    response: Response<AlbumsPreviewResponse>
-                ) {
-                    try {
-                        errorView.visibility = View.GONE
-                        recycler.visibility = View.VISIBLE
-                        albumsAdapter.addData(response.body()!!.data, true)
-                    } catch (e: Exception) {
-                        errorView.visibility = View.VISIBLE
-                        recycler.visibility = View.GONE
-                        Log.e(tag, "ERROR: ${e.localizedMessage}")
-                    }
-                    refresher.isRefreshing = false
-                }
+        ApiUtils.getApiService()
+            .getAlbumsPreview()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onSuccess = { response ->
+                errorView.isVisible = false
+                recycler.isVisible = true
+                albumsAdapter.addData(response.data, true)
+            }, onError = {
+                errorView.isVisible = true
+                recycler.isVisible = false
+                refresher.isRefreshing = false
+                Log.e("AlbumsFragment", "AlbumsRequestError: ${it.localizedMessage}")
             })
+            .disposeOnDestroy(viewLifecycleOwner)
     }
 }

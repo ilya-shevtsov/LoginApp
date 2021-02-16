@@ -25,7 +25,6 @@ class RegistrationFragment : Fragment() {
     private lateinit var password: EditText
     private lateinit var passwordAgain: EditText
     private lateinit var registration: Button
-    private lateinit var sharedPreferencesHelper: SharedPreferencesHelper
 
     companion object {
         fun newInstance(): RegistrationFragment {
@@ -45,34 +44,39 @@ class RegistrationFragment : Fragment() {
         password = view.findViewById(R.id.registrationPasswordEditText)
         passwordAgain = view.findViewById(R.id.registrationPasswordAgainEditText)
         registration = view.findViewById(R.id.registrationRegistrationButton)
-        sharedPreferencesHelper = SharedPreferencesHelper(context!!)
 
         registration.setOnClickListener {
             if (isInputValid()) {
-                val user = User(
-                    email = login.text.toString(),
-                    name = name.text.toString(),
-                    password = password.text.toString(),
-                    hasSuccessLogin = false
-                )
-                val userDto = user.toUserDto()
-
-                ApiUtils.getApiService()
-                    .registration(userDto)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(onComplete = {
-                        showMassage(R.string.login_register_success)
-                        fragmentManager!!.popBackStack()
-                    }, onError = {
-                        showMassage(R.string.request_error)
-                        Log.e("Haha", "Error: ${it.localizedMessage}")
-                    })
+                registerUser()
             } else {
-                showMassage(R.string.input_error)
+                showMassage(R.string.something_went_wrong_try_again)
             }
         }
         return view
+    }
+
+    private fun registerUser() {
+        val user = User(
+            email = login.text.toString(),
+            name = name.text.toString(),
+            password = password.text.toString(),
+            hasSuccessLogin = false
+        )
+
+        val userDto = user.toUserDto()
+
+        ApiUtils.getApiService()
+            .registration(userDto)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onComplete = {
+                showMassage(R.string.login_register_success)
+                fragmentManager!!.popBackStack()
+            }, onError = {
+                showMassage(stringId = R.string.request_error)
+                Log.e("RegistrationFragment", "RegistrationRequestError: ${it.localizedMessage}")
+            })
+            .disposeOnDestroy(viewLifecycleOwner)
     }
 
     private fun isInputValid(): Boolean {
@@ -96,7 +100,7 @@ class RegistrationFragment : Fragment() {
                 && !TextUtils.isEmpty(passwordAgain)
     }
 
-    fun showMassage(@StringRes stringId: Int) {
+    private fun showMassage(@StringRes stringId: Int) {
         Toast.makeText(activity, stringId, Toast.LENGTH_LONG).show()
     }
 

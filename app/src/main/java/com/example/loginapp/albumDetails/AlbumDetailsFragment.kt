@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,13 +27,6 @@ class AlbumDetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     private lateinit var album: AlbumsPreview
 
     private val songsAdapter: SongsAdapter = SongsAdapter()
-
-//    private val songsAdapter: SongsAdapter = SongsAdapter(onItemClicked = { song ->
-//        fragmentManager!!.beginTransaction()
-//            .replace(R.id.fragmentContainer, AlbumDetailsFragment.newInstance(song))
-//            .addToBackStack(AlbumDetailsFragment::class.java.simpleName)
-//            .commit()
-//    })
 
     companion object {
         private const val ALBUM_KEY = "ALBUM_KEY"
@@ -88,12 +82,12 @@ class AlbumDetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                     response: Response<AlbumDetailsResponse>
                 ) {
                     try {
-                        errorView.visibility = View.GONE
-                        recycler.visibility = View.VISIBLE
+                        errorView.isVisible = false
+                        recycler.isVisible = true
                         songsAdapter.addData(response.body()!!.data.songs, true)
                     } catch (e: Exception) {
-                        errorView.visibility = View.VISIBLE
-                        recycler.visibility = View.GONE
+                        errorView.isVisible = true
+                        recycler.isVisible = false
                         Log.e(tag, "ERROR: ${e.localizedMessage}")
                     }
                     refresher.isRefreshing = false
