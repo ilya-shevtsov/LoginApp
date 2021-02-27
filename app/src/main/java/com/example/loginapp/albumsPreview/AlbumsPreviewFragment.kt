@@ -70,6 +70,7 @@ class AlbumsPreviewFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         ApiUtils.getApiService()
             .getAlbumsPreview()
             .subscribeOn(Schedulers.io())
+
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { refresher.isRefreshing = true }
             .doFinally { refresher.isRefreshing = false }

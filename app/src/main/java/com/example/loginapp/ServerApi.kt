@@ -28,5 +28,5 @@ interface ServerApi {
     fun getSongs(): Call<SongsResponse>
 
     @GET("songs/{id}")
-    fun getSong(@Path("id") id: Int): Call<SongResponse>
+    fun getSong(@Path("id") id: Int): Call<SongDetailsResponse>
 }
