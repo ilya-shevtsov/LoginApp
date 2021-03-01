@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.loginapp.ApiUtils
+import com.example.loginapp.App
 import com.example.loginapp.R
 import com.example.loginapp.disposeOnDestroy
 import com.example.loginapp.modelClasses.AlbumsPreview

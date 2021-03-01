@@ -10,11 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.loginapp.ApiUtils
-import com.example.loginapp.R
-import com.example.loginapp.SingleFragmentActivity
+import com.example.loginapp.*
 import com.example.loginapp.albumDetails.AlbumDetailsFragment
-import com.example.loginapp.disposeOnDestroy
+import com.example.loginapp.dataBase.AlbumEntity
+import com.example.loginapp.modelClasses.AlbumsPreviewResponse
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
@@ -23,11 +22,12 @@ class AlbumsPreviewFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     private lateinit var recycler: RecyclerView
     private lateinit var errorView: View
-    private val albumsPreviewAdapter: AlbumsPreviewAdapter = AlbumsPreviewAdapter(onItemClicked = { album ->
-        (activity as SingleFragmentActivity).openFragment(
-            fragment = AlbumDetailsFragment.newInstance(album)
-        )
-    })
+    private val albumsPreviewAdapter: AlbumsPreviewAdapter =
+        AlbumsPreviewAdapter(onItemClicked = { album ->
+            (activity as SingleFragmentActivity).openFragment(
+                fragment = AlbumDetailsFragment.newInstance(album)
+            )
+        })
 
     private lateinit var refresher: SwipeRefreshLayout
 
@@ -70,7 +70,11 @@ class AlbumsPreviewFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         ApiUtils.getApiService()
             .getAlbumsPreview()
             .subscribeOn(Schedulers.io())
+            .doOnSuccess { response ->
+                val application = activity?.application as? App
+                application?.dataBase?.musicDao?.insertAlbums(mapAlbumsToEntity(response))
 
+            }
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { refresher.isRefreshing = true }
             .doFinally { refresher.isRefreshing = false }
@@ -86,5 +90,15 @@ class AlbumsPreviewFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                     Log.e("AlbumsFragment", "AlbumsRequestError: ${it.localizedMessage}")
                 })
             .disposeOnDestroy(viewLifecycleOwner)
+    }
+
+    private fun mapAlbumsToEntity(albumsPreview: AlbumsPreviewResponse): List<AlbumEntity> {
+        return albumsPreview.data.map { album ->
+            return@map AlbumEntity(
+                id = album.id,
+                name = album.name,
+                releaseDate = album.releaseDate
+            )
+        }
     }
 }
