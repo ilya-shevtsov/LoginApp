@@ -70,10 +70,14 @@ class AlbumsPreviewFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         ApiUtils.getApiService()
             .getAlbumsPreview()
             .subscribeOn(Schedulers.io())
-            .doOnSuccess { response ->
-                val application = activity?.application as? App
-                application?.dataBase?.musicDao?.insertAlbums(mapAlbumsToEntity(response))
-
+            .map {response -> mapAlbumsToEntity(response) }
+            .doOnSuccess { albumsEntity ->
+                getMusicDao()?.insertAlbums(albumsEntity)
+            }
+            .onErrorReturn {throwable ->
+                if (ApiUtils.NETWORK_EXCEPTIONS.contains(throwable::class)){
+                    return@onErrorReturn getMusicDao()?.getAlbums()
+                }else return@onErrorReturn null
             }
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { refresher.isRefreshing = true }
@@ -91,6 +95,9 @@ class AlbumsPreviewFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 })
             .disposeOnDestroy(viewLifecycleOwner)
     }
+
+
+    private fun getMusicDao() =  (activity?.application as? App)?.dataBase?.musicDao
 
     private fun mapAlbumsToEntity(albumsPreview: AlbumsPreviewResponse): List<AlbumEntity> {
         return albumsPreview.data.map { album ->

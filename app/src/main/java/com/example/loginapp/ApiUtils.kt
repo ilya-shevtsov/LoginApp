@@ -6,9 +6,19 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.Exception
+import java.net.ConnectException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
+import java.util.*
 
 class ApiUtils {
     companion object {
+        val NETWORK_EXCEPTIONS = listOf(
+            UnknownHostException::class,
+            SocketTimeoutException::class,
+            ConnectException::class
+        )
 
         private var okHttpClient: OkHttpClient? = null
         private var retrofit: Retrofit? = null
