@@ -1,4 +1,4 @@
-package com.example.loginapp.music.albums.view
+package com.example.loginapp.music.albumPreview.view
 
 import android.os.Bundle
 import android.util.Log
@@ -11,32 +11,29 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.loginapp.*
-import com.example.loginapp.music.album.view.AlbumDetailsFragment
-import com.example.loginapp.music.album.domain.AlbumEntity
-import com.example.loginapp.music.albums.dto.AlbumsPreviewResponse
+import com.example.loginapp.music.album.view.AlbumFragment
 import com.example.loginapp.common.api.ApiTools
-import com.example.loginapp.common.LoginAppApplication
 import com.example.loginapp.common.view.SingleFragmentActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 
-class AlbumsPreviewFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
+class AlbumPreviewFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     private lateinit var recycler: RecyclerView
     private lateinit var errorView: View
-    private val albumsPreviewAdapter: AlbumsPreviewAdapter =
-        AlbumsPreviewAdapter(onItemClicked = { album ->
+    private val albumsPreviewAdapter: AlbumPreviewAdapter =
+        AlbumPreviewAdapter(onItemClicked = { album ->
             (activity as SingleFragmentActivity).openFragment(
-                fragment = AlbumDetailsFragment.newInstance(album)
+                fragment = AlbumFragment.newInstance(album)
             )
         })
 
     private lateinit var refresher: SwipeRefreshLayout
 
     companion object {
-        fun newInstance(): AlbumsPreviewFragment {
-            return AlbumsPreviewFragment()
+        fun newInstance(): AlbumPreviewFragment {
+            return AlbumPreviewFragment()
         }
     }
 
@@ -73,15 +70,6 @@ class AlbumsPreviewFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         ApiTools.getApiService()
             .getAlbumsPreview()
             .subscribeOn(Schedulers.io())
-            .map {response -> mapAlbumsToEntity(response) }
-            .doOnSuccess { albumsEntity ->
-                getMusicDao()?.insertAlbums(albumsEntity)
-            }
-            .onErrorReturn {throwable ->
-                if (ApiTools.NETWORK_EXCEPTIONS.contains(throwable::class)){
-                    return@onErrorReturn getMusicDao()?.getAlbums()
-                }else return@onErrorReturn null
-            }
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { refresher.isRefreshing = true }
             .doFinally { refresher.isRefreshing = false }
@@ -99,16 +87,4 @@ class AlbumsPreviewFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             .disposeOnDestroy(viewLifecycleOwner)
     }
 
-
-    private fun getMusicDao() =  (activity?.application as? LoginAppApplication)?.dataBase?.musicDao
-
-    private fun mapAlbumsToEntity(albumsPreview: AlbumsPreviewResponse): List<AlbumEntity> {
-        return albumsPreview.data.map { album ->
-            return@map AlbumEntity(
-                id = album.id,
-                name = album.name,
-                releaseDate = album.releaseDate
-            )
-        }
-    }
 }

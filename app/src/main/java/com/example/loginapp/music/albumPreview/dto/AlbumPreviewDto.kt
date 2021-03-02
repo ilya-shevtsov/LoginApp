@@ -1,9 +1,9 @@
-package com.example.loginapp.music.albums.dto
+package com.example.loginapp.music.albumPreview.dto
 
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-data class AlbumsPreviewDto(
+data class AlbumPreviewDto(
 
     @SerializedName("id")
     val id:Int = 0,

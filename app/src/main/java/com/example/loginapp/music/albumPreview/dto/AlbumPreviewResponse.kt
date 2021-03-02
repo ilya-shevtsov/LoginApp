@@ -1,12 +1,12 @@
-package com.example.loginapp.music.albums.dto
+package com.example.loginapp.music.albumPreview.dto
 
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-data class AlbumsPreviewResponse(
+data class AlbumPreviewResponse(
 
     @SerializedName("data")
-    val data: List<AlbumsPreviewDto>
+    val data: List<AlbumPreviewDto>
 
 ) : Serializable
 

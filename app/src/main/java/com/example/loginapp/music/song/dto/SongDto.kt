@@ -3,7 +3,7 @@ package com.example.loginapp.music.song.dto
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-data class SongDetailsDto(
+data class SongDto(
 
     @SerializedName("id")
     val id: String,

@@ -1,10 +1,10 @@
 package com.example.loginapp.music.album.dto
 
-import com.example.loginapp.music.song.dto.SongDetailsDto
+import com.example.loginapp.music.song.dto.SongDto
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-data class AlbumDetailsDto(
+data class AlbumDto(
 
     @SerializedName("id")
     val id:Int = 0,
@@ -16,7 +16,7 @@ data class AlbumDetailsDto(
     val releaseDate: String,
 
     @SerializedName("songs")
-    val songs: List<SongDetailsDto>
+    val songs: List<SongDto>
 
 ) : Serializable
 

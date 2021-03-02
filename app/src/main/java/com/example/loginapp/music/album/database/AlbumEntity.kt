@@ -1,8 +1,9 @@
-package com.example.loginapp.music.album.domain
+package com.example.loginapp.music.album.database
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "album_table")
 

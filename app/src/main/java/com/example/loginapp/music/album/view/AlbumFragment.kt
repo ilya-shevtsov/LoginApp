@@ -12,28 +12,29 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.loginapp.common.api.ApiTools
 import com.example.loginapp.R
-import com.example.loginapp.disposeOnDestroy
-import com.example.loginapp.music.albums.dto.AlbumsPreviewDto
-import com.example.loginapp.music.songs.view.SongsAdapter
+import com.example.loginapp.common.LoginAppApplication
+import com.example.loginapp.music.album.AlbumDtoMapper
+import com.example.loginapp.music.album.AlbumEntityMapper
+import com.example.loginapp.music.albumPreview.dto.AlbumPreviewDto
+import com.example.loginapp.music.song.SongEntityMapper
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 
-class AlbumDetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
+class AlbumFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     private lateinit var recycler: RecyclerView
     private lateinit var errorView: View
     private lateinit var refresher: SwipeRefreshLayout
-    private lateinit var album: AlbumsPreviewDto
+    private lateinit var album: AlbumPreviewDto
 
     private val songsAdapter: SongsAdapter = SongsAdapter()
 
     companion object {
         private const val ALBUM_KEY = "ALBUM_KEY"
 
-        fun newInstance(newInstanceAlbum: AlbumsPreviewDto): AlbumDetailsFragment {
+        fun newInstance(newInstanceAlbum: AlbumPreviewDto): AlbumFragment {
             val arguments = Bundle()
-            val fragment = AlbumDetailsFragment()
+            val fragment = AlbumFragment()
             arguments.putSerializable(ALBUM_KEY, newInstanceAlbum)
             fragment.arguments = arguments
             return fragment
@@ -57,7 +58,7 @@ class AlbumDetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        album = arguments!!.getSerializable(ALBUM_KEY) as AlbumsPreviewDto
+        album = arguments!!.getSerializable(ALBUM_KEY) as AlbumPreviewDto
         activity!!.title = album.name
         recycler.layoutManager = LinearLayoutManager(activity)
         recycler.adapter = songsAdapter
@@ -75,6 +76,22 @@ class AlbumDetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             .getAlbumDetails(album.id)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .map { response -> AlbumDtoMapper.mapDtoDomain(response.data) }
+            .doOnSuccess { album ->
+                val albumEntity = AlbumEntityMapper.mapDomainEntity(album)
+                val songEntityList = album.songs.map { song ->
+                    SongEntityMapper.mapDomainEntity(song, albumEntity.id)
+                }
+                getMusicDao()?.insertAlbum(albumEntity)
+                getMusicDao()?.insertSongs(songEntityList)
+            }
+            .onErrorReturn { throwable ->
+                if (ApiTools.NETWORK_EXCEPTIONS.contains(throwable::class)) {
+                    val album = getMusicDao()?.getAlbumById(album.id)
+                    val songs = getMusicDao()?.getSongsForAlbum(album.id)
+                    return@onErrorReturn
+                } else return@onErrorReturn null
+            }
             .doOnSubscribe { refresher.isRefreshing = true }
             .doFinally { refresher.isRefreshing = false }
             .subscribeBy(
@@ -93,4 +110,7 @@ class AlbumDetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 })
             .disposeOnDestroy(viewLifecycleOwner)
     }
+
+    private fun getMusicDao() = (activity?.application as? LoginAppApplication)?.dataBase?.musicDao
+
 }

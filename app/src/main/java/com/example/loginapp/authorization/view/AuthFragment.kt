@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment
 import com.example.loginapp.R
 import com.example.loginapp.registration.view.RegistrationFragment
 import com.example.loginapp.common.view.SingleFragmentActivity
-import com.example.loginapp.music.albums.view.AlbumsPreviewFragment
+import com.example.loginapp.music.albumPreview.view.AlbumPreviewFragment
 import com.example.loginapp.common.api.ApiTools
 import com.example.loginapp.disposeOnDestroy
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -82,7 +82,7 @@ class AuthFragment : Fragment() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onSuccess = {
-                (activity as SingleFragmentActivity).openFragment(fragment = AlbumsPreviewFragment.newInstance())
+                (activity as SingleFragmentActivity).openFragment(fragment = AlbumPreviewFragment.newInstance())
             }, onError = {
                 showMessage(R.string.request_error)
                 Log.e("AuthFragment", "AuthRequestError: ${it.localizedMessage}")

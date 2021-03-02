@@ -1,10 +1,10 @@
-package com.example.loginapp.music.song.domain
+package com.example.loginapp.music.song.database
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.example.loginapp.music.album.domain.AlbumEntity
+import com.example.loginapp.music.album.database.AlbumEntity
 import java.io.Serializable
 
 @Entity(tableName = "song_table",

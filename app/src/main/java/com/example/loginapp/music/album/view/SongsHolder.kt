@@ -1,10 +1,10 @@
-package com.example.loginapp.music.songs.view
+package com.example.loginapp.music.album.view
 
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.loginapp.R
-import com.example.loginapp.music.song.dto.SongDetailsDto
+import com.example.loginapp.music.song.dto.SongDto
 import kotlinx.android.extensions.LayoutContainer
 
 class SongsHolder(
@@ -15,7 +15,7 @@ class SongsHolder(
     private val duration: TextView =
         containerView.findViewById(R.id.listItemSongDurationTextView)
 
-    fun bind(item: SongDetailsDto) {
+    fun bind(item: SongDto) {
         title.text = item.name
         duration.text = item.duration
 

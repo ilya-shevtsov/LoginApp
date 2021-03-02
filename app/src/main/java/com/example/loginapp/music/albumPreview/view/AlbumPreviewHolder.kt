@@ -1,13 +1,13 @@
-package com.example.loginapp.music.albums.view
+package com.example.loginapp.music.albumPreview.view
 
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.loginapp.R
-import com.example.loginapp.music.albums.dto.AlbumsPreviewDto
+import com.example.loginapp.music.albumPreview.dto.AlbumPreviewDto
 import kotlinx.android.extensions.LayoutContainer
 
-class AlbumsPreviewHolder(
+class AlbumPreviewHolder(
     override val containerView: View
 ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
@@ -16,8 +16,8 @@ class AlbumsPreviewHolder(
         containerView.findViewById(R.id.listItemAlbumReleaseDateTextView)
 
     fun bind(
-        item: AlbumsPreviewDto,
-        onItemClicked: (item: AlbumsPreviewDto) -> Unit
+        item: AlbumPreviewDto,
+        onItemClicked: (item: AlbumPreviewDto) -> Unit
     ) {
         title.text = item.name
         releaseDate.text = item.releaseDate
