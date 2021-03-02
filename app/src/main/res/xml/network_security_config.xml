@@ -6,4 +6,7 @@
             <certificates src="user" />
         </trust-anchors>
     </debug-overrides>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">dddddandroid.academy.e-legion.com/api/</domain>
+    </domain-config>
 </network-security-config>

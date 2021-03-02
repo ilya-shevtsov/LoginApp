@@ -4,6 +4,7 @@ import com.example.loginapp.BuildConfig.SERVER_URL
 import com.google.gson.Gson
 import io.reactivex.android.BuildConfig
 import okhttp3.*
+
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -32,13 +33,13 @@ class ApiTools {
         ): OkHttpClient {
             if (newInstance || okHttpClient == null) {
                 val builder = OkHttpClient.Builder()
-                builder.authenticator(object :Authenticator{
-                    override fun authenticate(route: Route?, response: Response): Request? {
-                        val credentials: String = Credentials.basic(email, password)
-                       return response.request.newBuilder().header("authorization", credentials)
-                            .build()
-                    }
-                })
+//                builder.authenticator(object : Authenticator {
+//                    override fun authenticate(route: Route?, response: Response): Request? {
+//                        val credentials: String = Credentials.basic(email, password)
+//                       return response.request.newBuilder().header("authorization", credentials)
+//                            .build()
+//                    }
+//                })
                 builder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 okHttpClient = builder.build()
             }
@@ -51,7 +52,7 @@ class ApiTools {
             }
             if (retrofit == null) {
                 retrofit = Retrofit.Builder()
-                    .baseUrl(SERVER_URL)
+                    .baseUrl("http://dddddandroid.academy.e-legion.com/api/")
                     .client(getBasicAuthClient("", "", false))
                     .addConverterFactory(GsonConverterFactory.create(gson!!))
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())

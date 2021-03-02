@@ -84,7 +84,7 @@ class AuthFragment : Fragment() {
             .subscribeBy(onSuccess = {
                 (activity as SingleFragmentActivity).openFragment(fragment = AlbumPreviewFragment.newInstance())
             }, onError = {
-                showMessage(R.string.request_error)
+                showMessageNew(it.localizedMessage!!)
                 Log.e("AuthFragment", "AuthRequestError: ${it.localizedMessage}")
             })
             .disposeOnDestroy(viewLifecycleOwner)
@@ -101,5 +101,9 @@ class AuthFragment : Fragment() {
 
     private fun showMessage(@StringRes stringId: Int) {
         Toast.makeText(activity, stringId, Toast.LENGTH_LONG).show()
+    }
+
+    private fun showMessageNew(mess: String) {
+        Toast.makeText(activity, mess, Toast.LENGTH_LONG).show()
     }
 }

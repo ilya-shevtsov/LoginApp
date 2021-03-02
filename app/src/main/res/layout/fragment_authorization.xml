@@ -7,6 +7,7 @@
 
     <AutoCompleteTextView
         android:id="@+id/authorizationEmailEditText"
+        android:text="d@d.d"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
@@ -21,6 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
+        android:text="12345678"
         android:autofillHints="@string/login_password_hint"
         android:hint="@string/login_password_hint"
         android:inputType="textPassword"/>
