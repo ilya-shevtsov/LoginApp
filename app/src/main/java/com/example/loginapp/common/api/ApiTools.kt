@@ -1,5 +1,6 @@
 package com.example.loginapp.common.api
 
+import com.example.loginapp.BuildConfig.SERVER_URL
 import com.google.gson.Gson
 import io.reactivex.android.BuildConfig
 import okhttp3.*
@@ -31,10 +32,12 @@ class ApiTools {
         ): OkHttpClient {
             if (newInstance || okHttpClient == null) {
                 val builder = OkHttpClient.Builder()
-                builder.authenticator(Authenticator { _, response ->
-                    val credentials: String = Credentials.basic(email, password)
-                    response.request.newBuilder().header("authorization", credentials)
-                        .build()
+                builder.authenticator(object :Authenticator{
+                    override fun authenticate(route: Route?, response: Response): Request? {
+                        val credentials: String = Credentials.basic(email, password)
+                       return response.request.newBuilder().header("authorization", credentials)
+                            .build()
+                    }
                 })
                 builder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 okHttpClient = builder.build()
@@ -48,7 +51,7 @@ class ApiTools {
             }
             if (retrofit == null) {
                 retrofit = Retrofit.Builder()
-                    .baseUrl(BuildConfig.SERVER_URL)
+                    .baseUrl(SERVER_URL)
                     .client(getBasicAuthClient("", "", false))
                     .addConverterFactory(GsonConverterFactory.create(gson!!))
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())

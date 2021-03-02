@@ -13,11 +13,13 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.loginapp.common.api.ApiTools
 import com.example.loginapp.R
 import com.example.loginapp.common.LoginAppApplication
+import com.example.loginapp.disposeOnDestroy
 import com.example.loginapp.music.album.AlbumDtoMapper
 import com.example.loginapp.music.album.AlbumEntityMapper
 import com.example.loginapp.music.albumPreview.dto.AlbumPreviewDto
 import com.example.loginapp.music.song.SongEntityMapper
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 
 class AlbumFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
@@ -87,18 +89,21 @@ class AlbumFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             }
             .onErrorReturn { throwable ->
                 if (ApiTools.NETWORK_EXCEPTIONS.contains(throwable::class)) {
-                    val album = getMusicDao()?.getAlbumById(album.id)
-                    val songs = getMusicDao()?.getSongsForAlbum(album.id)
-                    return@onErrorReturn
+                    val albumEntity = getMusicDao()?.getAlbumById(album.id)
+                    val songsEntity = getMusicDao()?.getSongsForAlbum(album.id)
+                    return@onErrorReturn AlbumEntityMapper.mapEntityDomain(
+                        albumEntity!!,
+                        songsEntity!!
+                    )
                 } else return@onErrorReturn null
             }
             .doOnSubscribe { refresher.isRefreshing = true }
             .doFinally { refresher.isRefreshing = false }
             .subscribeBy(
-                onSuccess = { albumsDetailsResponse ->
+                onSuccess = { album ->
                     errorView.isVisible = false
                     recycler.isVisible = true
-                    songsAdapter.addData(albumsDetailsResponse.data.songs, true)
+                    songsAdapter.addData(album.songs, true)
                 },
                 onError = {
                     errorView.isVisible = true
